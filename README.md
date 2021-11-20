@@ -1,4 +1,4 @@
-# E-Auction-Seller
+# E-Auction-Seller-Service
 
 API containing following endpoints
 

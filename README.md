@@ -6,4 +6,4 @@ API containing following endpoints
 
 ### /e-auction/api/v1/seller/show-bids/{productId}
 
-### /e-auction/api/v1/buyer/update-bid/{productId}/{buyerEmailId}/{newBidAmount}
+### /e-auction/api/v1/seller/delete/{productId}

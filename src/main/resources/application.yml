@@ -1,0 +1,23 @@
+server:
+  port: 5050
+  servlet:
+    contextPath: /
+
+spring:
+  application:
+    name: e-auction-seller-service
+  data:
+    mongodb:
+      database: e-auction_seller
+      uri: mongodb+srv://mongo-user:m0ngo-P%40%24%24@cluster0.i5tgr.mongodb.net/e-auction_seller?retryWrites=true&w=majority
+  main:
+    allow-bean-definition-overriding: true
+  mvc:
+    throw-exception-if-no-hander-found: true
+    static-path-pattern: /swagger*
+
+info:
+  app:
+    name: ${spring.application.name}
+  build:
+    version: ${project.version}

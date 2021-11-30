@@ -1,0 +1,13 @@
+server:
+  port: 5050
+  servlet-path: /
+
+spring:
+  application:
+    name: e-auction-seller-service
+
+info:
+  app:
+    name: ${spring.application.name}
+  build:
+    version: ${project.version}

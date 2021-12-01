@@ -7,8 +7,8 @@ spring:
     name: e-auction-seller-service
   data:
     mongodb:
-      database: test_db_seller
-      uri: mongodb+srv://mongo-user:m0ngo-P%40%24%24@cluster0.i5tgr.mongodb.net/test_db_seller?retryWrites=true&w=majority
+      database: {db-name}
+      uri: mongodb+srv://{user}:{pwd}@{host}:{port}/{db-name}?retryWrites=true&w=majority
 
 info:
   app:

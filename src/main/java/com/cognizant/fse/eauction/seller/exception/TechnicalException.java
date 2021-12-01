@@ -18,10 +18,15 @@ public class TechnicalException extends RuntimeException {
 
     private static final long serialVersionUID = 6853858869431791704L;
 
-    private HttpStatus httpStatus;
+    private HttpStatus status;
 
     public TechnicalException(String message, HttpStatus httpStatus) {
         super(message);
-        this.httpStatus = httpStatus;
+        this.status = httpStatus;
+    }
+
+    public TechnicalException(String message, Throwable cause, HttpStatus httpStatus) {
+        super(message, cause);
+        this.status = httpStatus;
     }
 }

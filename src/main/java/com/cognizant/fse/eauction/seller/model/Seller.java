@@ -8,11 +8,15 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection="seller_info")
-public class Seller {
+public class Seller implements Serializable {
+
+    private static final long serialVersionUID = 955728933773177978L;
 
     @Transient
     public static final String SEQUENCE_NAME = "seller-info";

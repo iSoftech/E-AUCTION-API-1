@@ -44,7 +44,7 @@ public interface ProductService {
     Product addProduct(Product product);
 
     /**
-     * Deletes an Existing Product
+     * Deletes an existing Product
      *
      * @param productId refers to attribute {@code id}
      */

@@ -25,4 +25,11 @@ public interface SellerService {
      * @return a newly added seller of type {@link Seller}
      */
     Seller addSeller(Seller seller);
+
+    /**
+     * Deletes an existing Seller
+     *
+     * @param sellerId refers to attribute {@code id}
+     */
+    void deleteSeller(Integer sellerId);
 }

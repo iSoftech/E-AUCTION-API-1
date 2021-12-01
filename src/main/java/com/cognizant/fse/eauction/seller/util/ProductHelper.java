@@ -1,5 +1,9 @@
 package com.cognizant.fse.eauction.seller.util;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -10,6 +14,31 @@ import java.util.Date;
  * @since 29/11/2021
  */
 public class ProductHelper {
+
+    private static final String DATE_FORMAT = "dd-MM-yyyy";
+
+    private ProductHelper() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    public static Date now() {
+        return new Date();
+    }
+
+    public static Date toDate(String dateString) {
+        if (StringUtils.isBlank(dateString)) {
+            return null;
+        }
+        Date date = null;
+        try {
+            DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+            dateFormat.setLenient(true);
+            date = dateFormat.parse(dateString);
+        } catch (Exception exc) {
+           return null;
+        }
+        return date;
+    }
 
 
     public static boolean isFutureDate(Date date) {

@@ -1,22 +1,25 @@
 package com.cognizant.fse.eauction.seller.controller;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.servlet.MockMvc;
 
-@ExtendWith(SpringExtension.class)
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@AutoConfigureMockMvc
+@SpringBootTest
 class HealthControllerTests {
 
-    @InjectMocks
-    private HealthController healthController;
+    @Autowired
+    MockMvc mockMvc;
 
     @Test
-    void test_nodeStatus() {
-        final ResponseEntity<HttpStatus> status = healthController.nodeStatus();
-        Assertions.assertEquals(HttpStatus.OK, status.getBody());
+    void test_nodeStatus() throws Exception {
+        mockMvc.perform(
+                get("/health/node-status"))
+                .andExpect(status().isOk());
     }
 }

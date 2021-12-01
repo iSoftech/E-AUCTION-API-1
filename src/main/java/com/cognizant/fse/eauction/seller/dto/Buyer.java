@@ -3,14 +3,15 @@ package com.cognizant.fse.eauction.seller.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Buyer {
+public class Buyer implements Serializable {
+
+    private static final long serialVersionUID = 955728933773177418L;
 
     private Integer id;
     private String firstName;
@@ -19,6 +20,6 @@ public class Buyer {
     private String city;
     private String state;
     private Integer pin;
-    private Integer phone;
+    private String phone;
     private String email;
 }

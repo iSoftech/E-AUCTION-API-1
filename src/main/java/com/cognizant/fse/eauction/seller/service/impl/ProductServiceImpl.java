@@ -6,10 +6,8 @@ import com.cognizant.fse.eauction.seller.model.Product;
 import com.cognizant.fse.eauction.seller.repo.ProductRepository;
 import com.cognizant.fse.eauction.seller.service.ProductService;
 import com.cognizant.fse.eauction.seller.service.SequenceService;
-import com.cognizant.fse.eauction.seller.util.ProductHelper;
+import static com.cognizant.fse.eauction.seller.util.ProductHelper.*;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.annotation.Resource;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,8 +27,6 @@ import java.util.Optional;
  */
 @Service
 public class ProductServiceImpl implements ProductService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Resource
     private ProductRepository productRepository;
@@ -59,9 +54,9 @@ public class ProductServiceImpl implements ProductService {
                 product = productDoc.get();
             }
         } catch (Exception exc) {
-            LOGGER.error(String.format("Error occurred when trying to fetch Product [productId: %s]", productId), exc);
-            HttpStatus httpStatus = AnnotationUtils.findAnnotation(exc.getClass(), ResponseStatus.class).code();
-            throw new TechnicalException(exc.getMessage(), httpStatus);
+            ResponseStatus responseStatus = AnnotationUtils.findAnnotation(exc.getClass(), ResponseStatus.class);
+            HttpStatus httpStatus = (Objects.nonNull(responseStatus)) ? responseStatus.code() : null;
+            throw new TechnicalException(exc.getMessage(), exc, httpStatus);
         }
         return product;
     }
@@ -73,9 +68,9 @@ public class ProductServiceImpl implements ProductService {
             product.setId(sequenceService.getNextSequence(Product.SEQUENCE_NAME));
             product = productRepository.save(product);
         } catch (Exception exc) {
-            LOGGER.error(String.format("Error occurred when trying to Add a Product [productName: %s]", product.getProductName()), exc);
-            HttpStatus httpStatus = AnnotationUtils.findAnnotation(exc.getClass(), ResponseStatus.class).code();
-            throw new TechnicalException(exc.getMessage(), httpStatus);
+            ResponseStatus responseStatus = AnnotationUtils.findAnnotation(exc.getClass(), ResponseStatus.class);
+            HttpStatus httpStatus = (Objects.nonNull(responseStatus)) ? responseStatus.code() : null;
+            throw new TechnicalException(exc.getMessage(), exc, httpStatus);
         }
         return product;
     }
@@ -89,9 +84,9 @@ public class ProductServiceImpl implements ProductService {
                 productRepository.delete(product.get());
             }
         } catch (Exception exc) {
-            LOGGER.error(String.format("Error occurred when trying to Delete a Product [productId: %s]", productId), exc);
-            HttpStatus httpStatus = AnnotationUtils.findAnnotation(exc.getClass(), ResponseStatus.class).code();
-            throw new TechnicalException(exc.getMessage(), httpStatus);
+            ResponseStatus responseStatus = AnnotationUtils.findAnnotation(exc.getClass(), ResponseStatus.class);
+            HttpStatus httpStatus = (Objects.nonNull(responseStatus)) ? responseStatus.code() : null;
+            throw new TechnicalException(exc.getMessage(), exc, httpStatus);
         }
     }
 
@@ -125,7 +120,7 @@ public class ProductServiceImpl implements ProductService {
                             "either empty or not numeric [startingPrice: %s]", product.getStartingPrice()));
         }
         if (Objects.isNull(product.getBidEndDate())
-                || !ProductHelper.isFutureDate(product.getBidEndDate())) {
+                || !isFutureDate(toDate(product.getBidEndDate()))) {
             throw new InvalidDataException(String.format("The product cannot be added as the bidEndDate parameter is " +
                     "either empty or not a future date [bidEndDate: %s]", product.getBidEndDate()));
         }
@@ -138,7 +133,7 @@ public class ProductServiceImpl implements ProductService {
                     "[productId: %s]", productId));
         } else {
             Product product = productDoc.get();
-            if (ProductHelper.isFutureDate(product.getBidEndDate(), Calendar.getInstance().getTime())) {
+            if (isFutureDate(toDate(product.getBidEndDate()), now())) {
                 throw new InvalidOperationException(String.format("The product cannot be deleted as the bidEndDate is " +
                         "in the past from the current date [bidEndDate: %s]", product.getBidEndDate()));
             }

@@ -9,8 +9,6 @@ import com.cognizant.fse.eauction.seller.service.SellerService;
 import com.cognizant.fse.eauction.seller.service.SequenceService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.annotation.Resource;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -29,8 +28,6 @@ import java.util.Optional;
 @Service
 public class SellerServiceImpl implements SellerService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SellerServiceImpl.class);
-    
     @Resource
     private SellerRepository sellerRepository;
     @Autowired
@@ -47,9 +44,9 @@ public class SellerServiceImpl implements SellerService {
                 seller = sellerDoc.get();
             }
         } catch (Exception exc) {
-            LOGGER.error(String.format("Error occurred when trying to fetch Seller [sellerId: %s]", sellerId), exc);
-            HttpStatus httpStatus = AnnotationUtils.findAnnotation(exc.getClass(), ResponseStatus.class).code();
-            throw new TechnicalException(exc.getMessage(), httpStatus);
+            ResponseStatus responseStatus = AnnotationUtils.findAnnotation(exc.getClass(), ResponseStatus.class);
+            HttpStatus httpStatus = (Objects.nonNull(responseStatus)) ? responseStatus.code() : null;
+            throw new TechnicalException(exc.getMessage(), exc, httpStatus);
         }
         return seller;
     }
@@ -61,13 +58,28 @@ public class SellerServiceImpl implements SellerService {
             seller.setId(sequenceService.getNextSequence(Seller.SEQUENCE_NAME));
             seller = sellerRepository.save(seller);
         } catch (Exception exc) {
-            LOGGER.error(String.format("Error occurred when trying to Add a Seller [sellerEmail: %s]", seller.getEmail()), exc);
-            HttpStatus httpStatus = AnnotationUtils.findAnnotation(exc.getClass(), ResponseStatus.class).code();
-            throw new TechnicalException(exc.getMessage(), httpStatus);
+            ResponseStatus responseStatus = AnnotationUtils.findAnnotation(exc.getClass(), ResponseStatus.class);
+            HttpStatus httpStatus = (Objects.nonNull(responseStatus)) ? responseStatus.code() : null;
+            throw new TechnicalException(exc.getMessage(), exc, httpStatus);
         }
         return seller;
     }
 
+    @Override
+    public void deleteSeller(Integer sellerId) {
+        try {
+            validateDeleteSellerAndThrowException(sellerId);
+            Optional<Seller> seller = sellerRepository.findById(sellerId);
+            if (seller.isPresent()) {
+                sellerRepository.delete(seller.get());
+            }
+        } catch (Exception exc) {
+            ResponseStatus responseStatus = AnnotationUtils.findAnnotation(exc.getClass(), ResponseStatus.class);
+            HttpStatus httpStatus = (Objects.nonNull(responseStatus)) ? responseStatus.code() : null;
+            throw new TechnicalException(exc.getMessage(), exc, httpStatus);
+        }
+    }
+    
     /**
      * Validates and Throw Exception for the new Seller entry
      *
@@ -104,6 +116,14 @@ public class SellerServiceImpl implements SellerService {
                 || !EmailValidator.getInstance().isValid(seller.getEmail())) {
             throw new InvalidDataException(String.format("The seller cannot be added as the email parameter is " +
                             "either empty or not a valid email address [email: %s]", seller.getEmail()));
+        }
+    }
+
+    private void validateDeleteSellerAndThrowException(Integer sellerId) {
+        Optional<Seller> sellerDoc = sellerRepository.findById(sellerId);
+        if (sellerDoc.isEmpty()) {
+            throw new ResourceNotExistException(String.format("The seller cannot be deleted as the seller does not exist " +
+                    "[sellerId: %s]", sellerId));
         }
     }
 }

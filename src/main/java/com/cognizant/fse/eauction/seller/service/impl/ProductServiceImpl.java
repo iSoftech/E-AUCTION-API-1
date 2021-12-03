@@ -1,6 +1,6 @@
 package com.cognizant.fse.eauction.seller.service.impl;
 
-import com.cognizant.fse.eauction.seller.contant.ProductCategory;
+import com.cognizant.fse.eauction.seller.constant.ProductCategory;
 import com.cognizant.fse.eauction.seller.exception.*;
 import com.cognizant.fse.eauction.seller.model.Product;
 import com.cognizant.fse.eauction.seller.repo.ProductRepository;

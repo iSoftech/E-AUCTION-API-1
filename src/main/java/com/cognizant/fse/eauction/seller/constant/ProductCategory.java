@@ -1,4 +1,4 @@
-package com.cognizant.fse.eauction.seller.contant;
+package com.cognizant.fse.eauction.seller.constant;
 
 /**
  * Product Category Enum is to manage all the defined Product Categories

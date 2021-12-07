@@ -14,3 +14,11 @@ info:
     name: ${spring.application.name}
   build:
     version: ${project.version}
+
+app:
+  services:
+    buyer-service:
+      scheme: http
+      host: localhost
+      port: 6060
+      bid-search: /buyer/show-bids/{product-id}

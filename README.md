@@ -2,14 +2,16 @@
 
 API containing following endpoints
 
-### /e-auction/api/v1/seller/show-products
+### GET /e-auction/api/v1/seller/show-products
 
-### /e-auction/api/v1/seller/{seller-id}/show-products
+### GET /e-auction/api/v1/seller/show-products/{product-id}
 
-### /e-auction/api/v1/seller/add-product
+### GET /e-auction/api/v1/seller/{seller-id}/show-products
 
-### /e-auction/api/v1/seller/{seller-id}/add-product
+### POST /e-auction/api/v1/seller/add-product
 
-### /e-auction/api/v1/seller/{seller-id}/show-products/{product-id}/show-bids
+### POST /e-auction/api/v1/seller/{seller-id}/add-product
 
-### /e-auction/api/v1/seller/delete-product/{product-id}
+### GET /e-auction/api/v1/seller/{seller-id}/show-products/{product-id}/show-bids
+
+### DELETE /e-auction/api/v1/seller/delete-product/{product-id}

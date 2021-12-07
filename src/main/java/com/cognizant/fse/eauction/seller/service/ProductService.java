@@ -1,6 +1,7 @@
 package com.cognizant.fse.eauction.seller.service;
 
 import com.cognizant.fse.eauction.seller.model.Product;
+import com.cognizant.fse.eauction.seller.dto.Bid;
 
 import java.util.List;
 
@@ -49,4 +50,12 @@ public interface ProductService {
      * @param productId refers to attribute {@code id}
      */
     void deleteProduct(Integer productId);
+
+    /**
+     * Returns list of Bids placed for the Product
+     *
+     * @param productId refers to attribute {@code id} of type {@link Product}
+     * @return a {@link List} of {@link Bid} identified by its productId
+     */
+    List<Bid> getProductBids(Integer productId);
 }

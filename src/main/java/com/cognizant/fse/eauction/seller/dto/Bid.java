@@ -6,6 +6,12 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * Bid Response Class is to handle data transfer
+ *
+ * @author Mohamed Yusuff
+ * @since 29/11/2021
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

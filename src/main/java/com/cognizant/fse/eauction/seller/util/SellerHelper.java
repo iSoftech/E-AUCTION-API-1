@@ -8,16 +8,16 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Product Helper class to manage utility methods
+ * Seller Helper class to manage utility methods
  *
  * @author Mohamed Yusuff
  * @since 29/11/2021
  */
-public class ProductHelper {
+public class SellerHelper {
 
     private static final String DATE_FORMAT = "dd-MM-yyyy";
 
-    private ProductHelper() {
+    private SellerHelper() {
         throw new IllegalStateException("Utility class");
     }
 
@@ -40,9 +40,8 @@ public class ProductHelper {
         return date;
     }
 
-
     public static boolean isFutureDate(Date date) {
-        return isFutureDate(new Date(), date);
+        return isFutureDate(now(), date);
     }
 
     public static boolean isFutureDate(Date sourceDate, Date targetDate) {

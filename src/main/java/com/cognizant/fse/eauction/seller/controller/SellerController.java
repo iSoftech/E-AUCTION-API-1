@@ -1,9 +1,7 @@
 package com.cognizant.fse.eauction.seller.controller;
 
 import com.cognizant.fse.eauction.seller.common.RestApiController;
-import com.cognizant.fse.eauction.seller.dto.ProductRequest;
-import com.cognizant.fse.eauction.seller.dto.ProductResponse;
-import com.cognizant.fse.eauction.seller.dto.ProductSellerRequest;
+import com.cognizant.fse.eauction.seller.dto.*;
 import com.cognizant.fse.eauction.seller.model.Product;
 import com.cognizant.fse.eauction.seller.model.Seller;
 import com.cognizant.fse.eauction.seller.service.ProductService;
@@ -13,11 +11,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -50,9 +51,11 @@ public class SellerController {
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
     @GetMapping("show-products")
+    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
+    public ResponseEntity<Products> showProducts() {
+        List<Product> productList = productService.getAllProducts();
+        Products products = Products.builder().products(productList).build();
         return ResponseEntity.ok(products);
     }
 
@@ -72,9 +75,31 @@ public class SellerController {
     })
     @GetMapping("{seller-id}/show-products")
     @ResponseBody
-    public ResponseEntity<List<Product>> getAllProductsBySeller(@PathVariable("seller-id") Integer sellerId) {
+    public ResponseEntity<List<Product>> showProductsBySeller(@PathVariable("seller-id") Integer sellerId) {
         List<Product> products = productService.getAllProducts(sellerId);
         return ResponseEntity.ok(products);
+    }
+
+    /**
+     * Returns a Product for the given Product Id
+     *
+     * @param productId refers to attribute {@code id} of type {@link Product}
+     * @return the requested product of type {@link Product}
+     */
+    @ApiOperation(value = "For [US_05] Show a Product for a given Product Id", response = Product.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", response = Product.class, responseContainer = "List"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Product not found"),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
+    @GetMapping("show-products/{product-id}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    @ResponseBody
+    public ResponseEntity<Product> showProduct(@PathVariable("product-id") Integer productId) {
+        Product product = productService.getProduct(productId);
+        return ResponseEntity.ok(product);
     }
 
     /**
@@ -131,11 +156,10 @@ public class SellerController {
     /**
      * Returns the Product Details with Bids Placed
      *
-     * @param sellerId refers to attribute {@code id} of type {@link Seller}
      * @param productId refers to attribute {@code id} of type {@link Product}
      * @return the product response of type {@link ProductResponse}
      */
-    @ApiOperation(value = "[US_04_Enhanced] Shows the Product details with the list of bids placed", response = Product.class)
+    @ApiOperation(value = "[US_04_Enhanced] Shows the Product details with the list of bids placed", response = ProductBidResponse.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK", response = Product.class),
             @ApiResponse(code = 400, message = "Bad Request"),
@@ -143,17 +167,21 @@ public class SellerController {
             @ApiResponse(code = 404, message = "Product not found"),
             @ApiResponse(code = 500, message = "Internal Server Error"),
     })
-    @GetMapping("/{seller-id}/show-products/{product-id}/show-bids")
+    @GetMapping("/show-products/{product-id}/show-bids")
+    @CrossOrigin(origins = "http://localhost:3000")
     @ResponseBody
-    public ResponseEntity<ProductResponse> showProductBids(@PathVariable("seller-id") Integer sellerId,
-                                                           @PathVariable("product-id") Integer productId) {
+    public ResponseEntity<ProductBidResponse> showProductBids(@PathVariable("product-id") Integer productId) {
         Product product = productService.getProduct(productId);
         Seller seller = sellerService.getSeller(product.getSellerId());
-        // TODO: To add Bid details
-        ProductResponse productResponse = ProductResponse.builder()
+        List<Bid> bidsPlaced = productService.getProductBids(productId);
+        if (CollectionUtils.isNotEmpty(bidsPlaced)) {
+            Collections.sort(bidsPlaced, Comparator.comparing(Bid::getBidAmount).reversed());
+        }
+        ProductBidResponse productResponse = ProductBidResponse.builder()
                 .status(HttpStatus.OK)
                 .product(product)
                 .seller(seller)
+                .bidsPlaced(bidsPlaced)
                 .build();
         return ResponseEntity.ok(productResponse);
     }
@@ -163,7 +191,7 @@ public class SellerController {
      *
      * @param productId refers to attribute {@code id} of type {@link Product}
      */
-    @ApiOperation(value = "[US_02_Enhanced] Deletes the given Product", response = Product.class)
+    @ApiOperation(value = "[US_02_Enhanced] Deletes the given Product", response = HttpStatus.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK", response = Product.class),
             @ApiResponse(code = 400, message = "Bad Request"),

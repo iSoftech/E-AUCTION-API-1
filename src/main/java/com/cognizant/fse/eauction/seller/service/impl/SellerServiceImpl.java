@@ -90,6 +90,7 @@ public class SellerServiceImpl implements SellerService {
         if (sellerDoc.isPresent()) {
             seller.setId(sellerDoc.get().getId());
         }
+        // Validates FirstName
         if (StringUtils.isBlank(seller.getFirstName())
                 || (StringUtils.length(seller.getFirstName()) < 5
                     || StringUtils.length(seller.getFirstName()) > 30)) {
@@ -97,6 +98,7 @@ public class SellerServiceImpl implements SellerService {
                     "either empty or not as per specified length as between 5 and 30 [firstName: %s, length: %s]",
                     seller.getFirstName(), StringUtils.length(seller.getFirstName())));
         }
+        // Validates LastName
         if (StringUtils.isBlank(seller.getLastName())
                 || (StringUtils.length(seller.getLastName()) < 5
                     || StringUtils.length(seller.getLastName()) > 25)) {
@@ -104,6 +106,7 @@ public class SellerServiceImpl implements SellerService {
                             "either empty or not as per specified length as between 5 and 25 [lastName: %s, length: %s]",
                     seller.getLastName(), StringUtils.length(seller.getLastName())));
         }
+        // Validates Phone
         if (StringUtils.isBlank(seller.getPhone())
                 || !StringUtils.isNumeric(seller.getPhone())
                 || StringUtils.length(seller.getPhone()) < 10
@@ -112,6 +115,7 @@ public class SellerServiceImpl implements SellerService {
                             "either empty or not numeric or not as per specified length as 10 [phone: %s, length: %s]",
                     seller.getPhone(), StringUtils.length(seller.getPhone())));
         }
+        // Validates Email
         if (StringUtils.isBlank(seller.getEmail())
                 || !EmailValidator.getInstance().isValid(seller.getEmail())) {
             throw new InvalidDataException(String.format("The seller cannot be added as the email parameter is " +
@@ -120,6 +124,7 @@ public class SellerServiceImpl implements SellerService {
     }
 
     private void validateDeleteSellerAndThrowException(Integer sellerId) {
+        // Validates Seller exist
         Optional<Seller> sellerDoc = sellerRepository.findById(sellerId);
         if (sellerDoc.isEmpty()) {
             throw new ResourceNotExistException(String.format("The seller cannot be deleted as the seller does not exist " +
